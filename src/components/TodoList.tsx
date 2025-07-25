@@ -1,11 +1,17 @@
-import {useState} from 'react'
-import  {useFormik} from "formik";
+import { useState } from 'react'
+import { useFormik } from "formik";
 import * as Yup from 'yup';
 import '../App.css';
 
+interface Todo {
+    id: number;
+    text: string;
+    completed: boolean;
+}
+
 
 const TodoList = () => {
-    const [todos, setTodos] = useState([]);
+    const [todos, setTodos] = useState<Todo[]>([]);
 
     const formik = useFormik({
         initialValues: {
@@ -18,30 +24,31 @@ const TodoList = () => {
                 .min(3, 'Task must be at least 3 characters'),
         }),
         onSubmit: (values, { resetForm }) => {
-            const newTodo = {
+            const newTodo: Todo = {
                 id: Date.now(),
                 text: values.task,
+                completed: false, // ✅ required field
             };
             setTodos(prev => [...prev, newTodo]);
             resetForm();
         },
     });
 
-    const handleDelete = (id:any) => {
+    const handleDelete = (id: any) => {
         setTodos(prev => prev.filter(todo => todo.id !== id));
     };
 
-    const toggleCompleted = (id:any) => {
+    const toggleCompleted = (id: any) => {
         setTodos(prev =>
             prev.map(todo =>
-                todo.id === id ? {...todo, completed: !todo.completed} : todo
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
             )
         )
     }
 
 
     return (
-        <div style={{maxWidth: '400px', margin: '0 auto'}}>
+        <div style={{ maxWidth: '400px', margin: '0 auto' }}>
             <h2>Todo List</h2>
 
             <form onSubmit={formik.handleSubmit} className="input-form">
@@ -56,8 +63,8 @@ const TodoList = () => {
                     />
                     <button type="submit">Add</button>
                 </div>
-                { formik.touched.task && formik.errors.task && (
-                    <div style={{color: 'red', marginTop: '5px'}}>{formik.errors.task}</div>
+                {formik.touched.task && formik.errors.task && (
+                    <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.task}</div>
                 )}
             </form>
 
